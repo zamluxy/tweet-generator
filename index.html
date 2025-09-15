@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tweet Generator - Upload Foto & Download Tweet</title>
+    <title>Tweet Generator - Tema & Waktu Real-time</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -15,13 +15,53 @@
             font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         }
 
+        :root {
+            --primary-color: #1d9bf0;
+            --text-primary: #0f1419;
+            --text-secondary: #536471;
+            --border-color: #eff3f4;
+            --bg-color: #ffffff;
+            --bg-secondary: #f7f9f9;
+            --hover-color: #f7f7f7;
+            --trends-hover: #eff1f1;
+            --card-bg: #ffffff;
+            --shadow: rgba(101, 119, 134, 0.2);
+        }
+
+        body.dark-theme {
+            --primary-color: #1d9bf0;
+            --text-primary: #e7e9ea;
+            --text-secondary: #71767b;
+            --border-color: #2f3336;
+            --bg-color: #000000;
+            --bg-secondary: #16181c;
+            --hover-color: #1c1f23;
+            --trends-hover: #1c1f23;
+            --card-bg: #000000;
+            --shadow: rgba(255, 255, 255, 0.03);
+        }
+
+        body.dim-theme {
+            --primary-color: #1d9bf0;
+            --text-primary: #e7e9ea;
+            --text-secondary: #8b98a5;
+            --border-color: #38444d;
+            --bg-color: #15202b;
+            --bg-secondary: #1e2732;
+            --hover-color: #1c2938;
+            --trends-hover: #1c2938;
+            --card-bg: #192734;
+            --shadow: rgba(255, 255, 255, 0.03);
+        }
+
         body {
-            background-color: #000;
-            color: #fff;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             padding: 0;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .container {
@@ -35,10 +75,11 @@
 
         header {
             display: flex;
-            justify-content: center;
-            padding: 15px 0;
-            background-color: #000;
-            border-bottom: 1px solid #2f3336;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -46,7 +87,7 @@
 
         .logo {
             font-size: 28px;
-            color: #1d9bf0;
+            color: var(--primary-color);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -55,6 +96,30 @@
 
         .logo i {
             font-size: 32px;
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .theme-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .theme-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
         }
 
         .main-content {
@@ -66,10 +131,11 @@
         .tweet-controls {
             flex: 1;
             min-width: 300px;
-            background-color: #000;
+            background-color: var(--card-bg);
             border-radius: 16px;
             padding: 25px;
-            border: 1px solid #2f3336;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 10px var(--shadow);
         }
 
         .tweet-preview {
@@ -84,7 +150,7 @@
         .section-title {
             font-size: 20px;
             margin-bottom: 20px;
-            color: #1d9bf0;
+            color: var(--primary-color);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -98,22 +164,23 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
-            color: #e7e9ea;
+            color: var(--text-primary);
         }
 
         textarea, input[type="text"], input[type="number"] {
             width: 100%;
             padding: 12px 15px;
             border-radius: 8px;
-            border: 1px solid #2f3336;
-            background-color: #000;
-            color: #e7e9ea;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
             font-size: 16px;
+            transition: border-color 0.3s;
         }
 
         textarea:focus, input:focus {
             outline: none;
-            border-color: #1d9bf0;
+            border-color: var(--primary-color);
         }
 
         textarea {
@@ -124,7 +191,7 @@
         .char-count {
             text-align: right;
             font-size: 14px;
-            color: #71767b;
+            color: var(--text-secondary);
             margin-top: 5px;
         }
 
@@ -151,7 +218,7 @@
         }
 
         .btn-primary {
-            background-color: #1d9bf0;
+            background-color: var(--primary-color);
             color: white;
         }
 
@@ -160,25 +227,25 @@
         }
 
         .btn-secondary {
-            background-color: #000;
-            color: #1d9bf0;
-            border: 1px solid #2f3336;
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            border: 1px solid var(--border-color);
         }
 
         .btn-secondary:hover {
-            background-color: #16181c;
+            background-color: var(--hover-color);
         }
 
         .btn-upload {
-            background-color: #333;
-            color: white;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
             padding: 10px 15px;
             font-size: 14px;
             width: 100%;
         }
 
         .btn-upload:hover {
-            background-color: #444;
+            background-color: var(--hover-color);
         }
 
         .controls-grid {
@@ -189,7 +256,7 @@
         }
 
         .control-item {
-            background-color: #16181c;
+            background-color: var(--bg-secondary);
             padding: 15px;
             border-radius: 12px;
             display: flex;
@@ -198,11 +265,11 @@
             justify-content: center;
             cursor: pointer;
             transition: background-color 0.2s;
-            border: 1px solid #2f3336;
+            border: 1px solid var(--border-color);
         }
 
         .control-item:hover {
-            background-color: #1d1f23;
+            background-color: var(--hover-color);
         }
 
         .control-item i {
@@ -211,17 +278,18 @@
         }
 
         .control-item.active {
-            background-color: #1d9bf0;
+            background-color: var(--primary-color);
             color: white;
         }
 
         .tweet-card {
             width: 100%;
             max-width: 600px;
-            background-color: #000;
-            border-radius: 0;
+            background-color: var(--card-bg);
+            border-radius: 16px;
             overflow: hidden;
-            border: 1px solid #2f3336;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px var(--shadow);
         }
 
         .tweet-header {
@@ -270,10 +338,11 @@
             align-items: center;
             gap: 4px;
             font-size: 15px;
+            color: var(--text-primary);
         }
 
         .username, .tweet-time {
-            color: #71767b;
+            color: var(--text-secondary);
             font-size: 15px;
         }
 
@@ -281,22 +350,22 @@
             padding: 4px 16px 12px;
             font-size: 23px;
             line-height: 1.4;
-            color: #e7e9ea;
+            color: var(--text-primary);
             font-weight: 400;
             overflow-wrap: break-word;
         }
 
         .tweet-time {
             padding: 0 16px 12px;
-            border-bottom: 1px solid #2f3336;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .tweet-stats {
             display: flex;
             justify-content: flex-start;
             padding: 12px 0;
-            border-bottom: 1px solid #2f3336;
-            color: #71767b;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
             gap: 20px;
         }
 
@@ -309,7 +378,7 @@
         }
 
         .stat:not(:last-child) {
-            border-right: 1px solid #2f3336;
+            border-right: 1px solid var(--border-color);
             padding-right: 20px;
         }
 
@@ -317,8 +386,8 @@
             display: flex;
             justify-content: space-around;
             padding: 12px 0;
-            border-bottom: 1px solid #2f3336;
-            color: #71767b;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
         }
 
         .action {
@@ -331,11 +400,11 @@
         }
 
         .action:hover {
-            color: #1d9bf0;
+            color: var(--primary-color);
         }
 
         .action-comment:hover {
-            color: #1d9bf0;
+            color: var(--primary-color);
         }
 
         .action-retweet:hover {
@@ -347,7 +416,7 @@
         }
 
         .action-share:hover {
-            color: #1d9bf0;
+            color: var(--primary-color);
         }
 
         .action-buttons {
@@ -362,15 +431,15 @@
             text-align: center;
             padding: 20px;
             margin-top: auto;
-            color: #71767b;
+            color: var(--text-secondary);
             font-size: 14px;
-            border-top: 1px solid #2f3336;
+            border-top: 1px solid var(--border-color);
         }
 
         .download-info {
             margin-top: 10px;
             font-size: 14px;
-            color: #71767b;
+            color: var(--text-secondary);
             text-align: center;
         }
 
@@ -387,12 +456,12 @@
             height: 100px;
             border-radius: 50%;
             overflow: hidden;
-            border: 3px solid #1d9bf0;
-            background-color: #15202b;
+            border: 3px solid var(--primary-color);
+            background-color: var(--bg-secondary);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #1d9bf0;
+            color: var(--primary-color);
             font-size: 40px;
         }
 
@@ -419,7 +488,7 @@
 
         .input-info {
             font-size: 12px;
-            color: #71767b;
+            color: var(--text-secondary);
             margin-top: 5px;
         }
 
@@ -435,14 +504,24 @@
             .tweet-body {
                 font-size: 20px;
             }
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
         }
     </style>
 </head>
-<body>
+<body class="dark-theme">
     <header>
         <div class="logo">
             <i class="fab fa-x-twitter"></i>
             <span>Tweet Generator</span>
+        </div>
+        <div class="theme-selector">
+            <button class="theme-btn" data-theme="light"><i class="fas fa-sun"></i> Light</button>
+            <button class="theme-btn" data-theme="dim"><i class="fas fa-moon"></i> Dim</button>
+            <button class="theme-btn active" data-theme="dark"><i class="fas fa-moon"></i> Dark</button>
         </div>
     </header>
 
@@ -544,10 +623,10 @@
                             <img id="previewAvatarImage" src="" alt="Profile" class="hidden">
                         </div>
                         <div class="user-info">
-                            <div class="display-name" id="previewDisplayName">Twitter User <span id="verifiedBadge" style="color: #1d9bf0; display: none;"><i class="fas fa-check-circle"></i></span></div>
+                            <div class="display-name" id="previewDisplayName">Twitter User <span id="verifiedBadge" style="color: var(--primary-color); display: none;"><i class="fas fa-check-circle"></i></span></div>
                             <div class="username" id="previewUsername">@twitteruser</div>
                         </div>
-                        <i class="fas fa-ellipsis-h" style="color: #71767b;"></i>
+                        <i class="fas fa-ellipsis-h" style="color: var(--text-secondary);"></i>
                     </div>
                     
                     <div class="tweet-body" id="previewTweetContent">
@@ -555,18 +634,18 @@
                     </div>
                     
                     <div class="tweet-time">
-                        <span>10:30 AM · 12 Jul 2023</span>
+                        <span id="previewTime">10:30 AM · 12 Jul 2023</span>
                     </div>
                     
                     <div class="tweet-stats">
                         <div class="stat">
-                            <span style="font-weight: 700; color: #e7e9ea;" id="previewRetweets">56</span> Retweets
+                            <span style="font-weight: 700; color: var(--text-primary);" id="previewRetweets">56</span> Retweets
                         </div>
                         <div class="stat">
-                            <span style="font-weight: 700; color: #e7e9ea;" id="previewQuotes">14</span> Quotes
+                            <span style="font-weight: 700; color: var(--text-primary);" id="previewQuotes">14</span> Quotes
                         </div>
                         <div class="stat">
-                            <span style="font-weight: 700; color: #e7e9ea;" id="previewLikes">245</span> Likes
+                            <span style="font-weight: 700; color: var(--text-primary);" id="previewLikes">245</span> Likes
                         </div>
                     </div>
                     
@@ -603,13 +682,14 @@
     </div>
 
     <footer>
-        <p>Dibuat dengan ❤️ Oleh ZamLuxy| Tweet Generator © 2025</p>
+        <p>Dibuat dengan ❤️ | Tweet Generator © 2023</p>
     </footer>
 
     <script>
         // Inisialisasi
         document.addEventListener('DOMContentLoaded', function() {
             updateCharCount();
+            updateTime();
             generateTweet();
             
             // Event listener untuk upload gambar
@@ -620,7 +700,31 @@
             document.getElementById('retweetsCount').addEventListener('input', validateNumberInputs);
             document.getElementById('repliesCount').addEventListener('input', validateNumberInputs);
             document.getElementById('quotesCount').addEventListener('input', validateNumberInputs);
+            
+            // Event listener untuk tema
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const theme = this.getAttribute('data-theme');
+                    changeTheme(theme);
+                    
+                    // Update active class
+                    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Update waktu setiap menit
+            setInterval(updateTime, 60000);
         });
+
+        // Fungsi untuk mengubah tema
+        function changeTheme(theme) {
+            document.body.classList.remove('light-theme', 'dim-theme', 'dark-theme');
+            document.body.classList.add(theme + '-theme');
+            
+            // Simpan preferensi tema
+            localStorage.setItem('theme', theme);
+        }
 
         // Fungsi untuk validasi input angka
         function validateNumberInputs() {
@@ -661,6 +765,24 @@
             } else {
                 charCount.classList.remove('warning', 'error');
             }
+        }
+
+        // Fungsi untuk update waktu real-time
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const formattedHours = hours % 12 || 12;
+            const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+            
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const month = months[now.getMonth()];
+            const day = now.getDate();
+            const year = now.getFullYear();
+            
+            const timeString = `${formattedHours}:${formattedMinutes} ${ampm} · ${day} ${month} ${year}`;
+            document.getElementById('previewTime').textContent = timeString;
         }
 
         // Fungsi untuk handle upload avatar
@@ -716,7 +838,7 @@
             const quotesCount = document.getElementById('quotesCount').value;
             
             document.getElementById('previewTweetContent').textContent = tweetContent;
-            document.getElementById('previewDisplayName').innerHTML = displayName + ' <span id="verifiedBadge" style="color: #1d9bf0;"><i class="fas fa-check-circle"></i></span>';
+            document.getElementById('previewDisplayName').innerHTML = displayName + ' <span id="verifiedBadge" style="color: var(--primary-color);"><i class="fas fa-check-circle"></i></span>';
             document.getElementById('previewUsername').textContent = username;
             
             // Update jumlah like, retweet, dll
@@ -793,7 +915,7 @@
             
             // Menggunakan html2canvas untuk mengonversi elemen tweet menjadi gambar
             html2canvas(tweetElement, {
-                backgroundColor: '#000',
+                backgroundColor: getComputedStyle(document.body).getPropertyValue('--card-bg'),
                 scale: 2, // Kualitas lebih tinggi
                 onclone: function(clonedDoc) {
                     const clonedElement = clonedDoc.getElementById('tweetToDownload');
@@ -825,4 +947,4 @@
         document.getElementById('quotesCount').addEventListener('input', generateTweet);
     </script>
 </body>
-  </html>
+    </html>
