@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tweet Generator - Upload Foto & Download Tweet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        header {
+            display: flex;
+            justify-content: center;
+            padding: 15px 0;
+            background-color: #000;
+            border-bottom: 1px solid #2f3336;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 28px;
+            color: #1d9bf0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+
+        .logo i {
+            font-size: 32px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .tweet-controls {
+            flex: 1;
+            min-width: 300px;
+            background-color: #000;
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid #2f3336;
+        }
+
+        .tweet-preview {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #1d9bf0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e7e9ea;
+        }
+
+        textarea, input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #2f3336;
+            background-color: #000;
+            color: #e7e9ea;
+            font-size: 16px;
+        }
+
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: #1d9bf0;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 14px;
+            color: #71767b;
+            margin-top: 5px;
+        }
+
+        .char-count.warning {
+            color: #ffd400;
+        }
+
+        .char-count.error {
+            color: #f91880;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #1d9bf0;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1a8cd8;
+        }
+
+        .btn-secondary {
+            background-color: #000;
+            color: #1d9bf0;
+            border: 1px solid #2f3336;
+        }
+
+        .btn-secondary:hover {
+            background-color: #16181c;
+        }
+
+        .btn-upload {
+            background-color: #333;
+            color: white;
+            padding: 10px 15px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .btn-upload:hover {
+            background-color: #444;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-item {
+            background-color: #16181c;
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: 1px solid #2f3336;
+        }
+
+        .control-item:hover {
+            background-color: #1d1f23;
+        }
+
+        .control-item i {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .control-item.active {
+            background-color: #1d9bf0;
+            color: white;
+        }
+
+        .tweet-card {
+            width: 100%;
+            max-width: 600px;
+            background-color: #000;
+            border-radius: 0;
+            overflow: hidden;
+            border: 1px solid #2f3336;
+        }
+
+        .tweet-header {
+            display: flex;
+            padding: 12px 16px;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #1d9bf0, #0c6ba1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar .initials {
+            position: absolute;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .user-info {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .display-name {
+            font-weight: 700;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 15px;
+        }
+
+        .username, .tweet-time {
+            color: #71767b;
+            font-size: 15px;
+        }
+
+        .tweet-body {
+            padding: 4px 16px 12px;
+            font-size: 23px;
+            line-height: 1.4;
+            color: #e7e9ea;
+            font-weight: 400;
+            overflow-wrap: break-word;
+        }
+
+        .tweet-time {
+            padding: 0 16px 12px;
+            border-bottom: 1px solid #2f3336;
+        }
+
+        .tweet-stats {
+            display: flex;
+            justify-content: flex-start;
+            padding: 12px 0;
+            border-bottom: 1px solid #2f3336;
+            color: #71767b;
+            gap: 20px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0 16px;
+            font-size: 14px;
+        }
+
+        .stat:not(:last-child) {
+            border-right: 1px solid #2f3336;
+            padding-right: 20px;
+        }
+
+        .tweet-actions {
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-bottom: 1px solid #2f3336;
+            color: #71767b;
+        }
+
+        .action {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: color 0.2s;
+            font-size: 14px;
+        }
+
+        .action:hover {
+            color: #1d9bf0;
+        }
+
+        .action-comment:hover {
+            color: #1d9bf0;
+        }
+
+        .action-retweet:hover {
+            color: #00ba7c;
+        }
+
+        .action-like:hover {
+            color: #f91880;
+        }
+
+        .action-share:hover {
+            color: #1d9bf0;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+            color: #71767b;
+            font-size: 14px;
+            border-top: 1px solid #2f3336;
+        }
+
+        .download-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #71767b;
+            text-align: center;
+        }
+
+        .upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .upload-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #1d9bf0;
+            background-color: #15202b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1d9bf0;
+            font-size: 40px;
+        }
+
+        .upload-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .custom-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .custom-input input {
+            flex: 1;
+        }
+
+        .input-info {
+            font-size: 12px;
+            color: #71767b;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .controls-grid {
+                grid-template-columns: repeat(1, 1fr);
+            }
+            
+            .tweet-body {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fab fa-x-twitter"></i>
+            <span>Tweet Generator</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="tweet-controls">
+                <h2 class="section-title"><i class="fas fa-edit"></i> Buat Tweet Baru</h2>
+                
+                <div class="form-group">
+                    <label for="tweetContent">Isi Tweet</label>
+                    <textarea id="tweetContent" placeholder="Apa yang sedang terjadi?">Hari ini saya mencoba membuat tweet generator yang keren dan asli! Hasilnya sangat mirip dengan Twitter, dan saya bisa mengunduh tweet sebagai gambar. 🚀✨</textarea>
+                    <div class="char-count"><span id="charCount">0</span>/280</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="displayName">Nama Tampilan</label>
+                    <input type="text" id="displayName" value="Twitter User" placeholder="Nama Anda">
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" value="@twitteruser" placeholder="@username">
+                </div>
+                
+                <div class="form-group">
+                    <label>Foto Profil</label>
+                    <div class="upload-container">
+                        <div class="upload-preview" id="avatarPreview">
+                            <div class="initials">TU</div>
+                            <img id="previewImage" class="hidden" src="" alt="Preview">
+                        </div>
+                        <input type="file" id="avatarUpload" accept="image/*" class="hidden">
+                        <button class="btn btn-upload" onclick="document.getElementById('avatarUpload').click()">
+                            <i class="fas fa-upload"></i> Upload Foto Profil
+                        </button>
+                    </div>
+                </div>
+                
+                <h2 class="section-title"><i class="fas fa-sliders-h"></i> Kustomisasi</h2>
+                
+                <div class="form-group">
+                    <label for="likesCount">Jumlah Suka (Like)</label>
+                    <div class="custom-input">
+                        <input type="number" id="likesCount" min="0" max="10000000" value="245">
+                        <button class="btn btn-secondary" onclick="document.getElementById('likesCount').value = '10000000'">Max (10jt)</button>
+                    </div>
+                    <div class="input-info">Maksimal: 10.000.000</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="retweetsCount">Jumlah Retweet</label>
+                    <div class="custom-input">
+                        <input type="number" id="retweetsCount" min="0" max="1000000" value="56">
+                        <button class="btn btn-secondary" onclick="document.getElementById('retweetsCount').value = '1000000'">Max (1jt)</button>
+                    </div>
+                    <div class="input-info">Maksimal: 1.000.000</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="repliesCount">Jumlah Balasan (Replies)</label>
+                    <div class="custom-input">
+                        <input type="number" id="repliesCount" min="0" max="500000" value="32">
+                        <button class="btn btn-secondary" onclick="document.getElementById('repliesCount').value = '500000'">Max (500k)</button>
+                    </div>
+                    <div class="input-info">Maksimal: 500.000</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="quotesCount">Jumlah Quote Tweet</label>
+                    <div class="custom-input">
+                        <input type="number" id="quotesCount" min="0" max="500000" value="14">
+                        <button class="btn btn-secondary" onclick="document.getElementById('quotesCount').value = '500000'">Max (500k)</button>
+                    </div>
+                    <div class="input-info">Maksimal: 500.000</div>
+                </div>
+                
+                <div class="controls-grid">
+                    <div class="control-item active" onclick="toggleOption('verified')">
+                        <i class="fas fa-badge-check"></i>
+                        <span>Terverifikasi</span>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" onclick="generateTweet()">
+                    <i class="fas fa-feather-alt"></i> Generate Tweet
+                </button>
+                <button class="btn btn-secondary" onclick="resetForm()" style="margin-top: 10px;">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+            
+            <div class="tweet-preview">
+                <h2 class="section-title"><i class="fas fa-eye"></i> Preview Tweet</h2>
+                
+                <div class="tweet-card" id="tweetToDownload">
+                    <div class="tweet-header">
+                        <div class="avatar">
+                            <div class="initials" id="avatarInitials">TU</div>
+                            <img id="previewAvatarImage" src="" alt="Profile" class="hidden">
+                        </div>
+                        <div class="user-info">
+                            <div class="display-name" id="previewDisplayName">Twitter User <span id="verifiedBadge" style="color: #1d9bf0; display: none;"><i class="fas fa-check-circle"></i></span></div>
+                            <div class="username" id="previewUsername">@twitteruser</div>
+                        </div>
+                        <i class="fas fa-ellipsis-h" style="color: #71767b;"></i>
+                    </div>
+                    
+                    <div class="tweet-body" id="previewTweetContent">
+                        Hari ini saya mencoba membuat tweet generator yang keren dan asli! Hasilnya sangat mirip dengan Twitter, dan saya bisa mengunduh tweet sebagai gambar. 🚀✨
+                    </div>
+                    
+                    <div class="tweet-time">
+                        <span>10:30 AM · 12 Jul 2023</span>
+                    </div>
+                    
+                    <div class="tweet-stats">
+                        <div class="stat">
+                            <span style="font-weight: 700; color: #e7e9ea;" id="previewRetweets">56</span> Retweets
+                        </div>
+                        <div class="stat">
+                            <span style="font-weight: 700; color: #e7e9ea;" id="previewQuotes">14</span> Quotes
+                        </div>
+                        <div class="stat">
+                            <span style="font-weight: 700; color: #e7e9ea;" id="previewLikes">245</span> Likes
+                        </div>
+                    </div>
+                    
+                    <div class="tweet-actions">
+                        <div class="action action-comment">
+                            <i class="far fa-comment"></i>
+                            <span id="previewReplies">32</span>
+                        </div>
+                        <div class="action action-retweet">
+                            <i class="fas fa-retweet"></i>
+                            <span id="previewRetweetsAction">56</span>
+                        </div>
+                        <div class="action action-like">
+                            <i class="far fa-heart"></i>
+                            <span id="previewLikesAction">245</span>
+                        </div>
+                        <div class="action action-share">
+                            <i class="far fa-share-square"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="downloadTweet()">
+                        <i class="fas fa-download"></i> Download sebagai Gambar
+                    </button>
+                </div>
+                
+                <div class="download-info">
+                    Klik tombol di atas untuk mengunduh tweet sebagai gambar PNG
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Dibuat dengan ❤️ | Tweet Generator © 2023</p>
+    </footer>
+
+    <script>
+        // Inisialisasi
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCharCount();
+            generateTweet();
+            
+            // Event listener untuk upload gambar
+            document.getElementById('avatarUpload').addEventListener('change', handleAvatarUpload);
+            
+            // Event listener untuk input angka
+            document.getElementById('likesCount').addEventListener('input', validateNumberInputs);
+            document.getElementById('retweetsCount').addEventListener('input', validateNumberInputs);
+            document.getElementById('repliesCount').addEventListener('input', validateNumberInputs);
+            document.getElementById('quotesCount').addEventListener('input', validateNumberInputs);
+        });
+
+        // Fungsi untuk validasi input angka
+        function validateNumberInputs() {
+            const likesInput = document.getElementById('likesCount');
+            const retweetsInput = document.getElementById('retweetsCount');
+            const repliesInput = document.getElementById('repliesCount');
+            const quotesInput = document.getElementById('quotesCount');
+            
+            if (likesInput.value > 10000000) likesInput.value = 10000000;
+            if (likesInput.value < 0) likesInput.value = 0;
+            
+            if (retweetsInput.value > 1000000) retweetsInput.value = 1000000;
+            if (retweetsInput.value < 0) retweetsInput.value = 0;
+            
+            if (repliesInput.value > 500000) repliesInput.value = 500000;
+            if (repliesInput.value < 0) repliesInput.value = 0;
+            
+            if (quotesInput.value > 500000) quotesInput.value = 500000;
+            if (quotesInput.value < 0) quotesInput.value = 0;
+            
+            generateTweet();
+        }
+
+        // Fungsi untuk menghitung karakter
+        function updateCharCount() {
+            const tweetContent = document.getElementById('tweetContent');
+            const charCount = document.getElementById('charCount');
+            const count = tweetContent.value.length;
+            
+            charCount.textContent = count;
+            
+            if (count > 250) {
+                charCount.classList.add('warning');
+                charCount.classList.remove('error');
+            } else if (count > 280) {
+                charCount.classList.add('error');
+                charCount.classList.remove('warning');
+            } else {
+                charCount.classList.remove('warning', 'error');
+            }
+        }
+
+        // Fungsi untuk handle upload avatar
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.match('image.*')) {
+                alert('Please upload an image file');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewImage = document.getElementById('previewImage');
+                const previewAvatarImage = document.getElementById('previewAvatarImage');
+                const avatarInitials = document.getElementById('avatarInitials');
+                const avatarPreviewInitials = document.querySelector('#avatarPreview .initials');
+                
+                // Tampilkan gambar dan sembunyikan inisial
+                previewImage.src = e.target.result;
+                previewImage.classList.remove('hidden');
+                
+                previewAvatarImage.src = e.target.result;
+                previewAvatarImage.classList.remove('hidden');
+                
+                avatarInitials.classList.add('hidden');
+                avatarPreviewInitials.classList.add('hidden');
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        // Fungsi untuk toggle opsi
+        function toggleOption(option) {
+            const element = document.querySelector('.control-item');
+            element.classList.toggle('active');
+            
+            const badge = document.getElementById('verifiedBadge');
+            badge.style.display = element.classList.contains('active') ? 'inline' : 'none';
+            
+            generateTweet();
+        }
+
+        // Fungsi untuk menghasilkan tweet
+        function generateTweet() {
+            const tweetContent = document.getElementById('tweetContent').value;
+            const displayName = document.getElementById('displayName').value;
+            const username = document.getElementById('username').value;
+            const likesCount = document.getElementById('likesCount').value;
+            const retweetsCount = document.getElementById('retweetsCount').value;
+            const repliesCount = document.getElementById('repliesCount').value;
+            const quotesCount = document.getElementById('quotesCount').value;
+            
+            document.getElementById('previewTweetContent').textContent = tweetContent;
+            document.getElementById('previewDisplayName').innerHTML = displayName + ' <span id="verifiedBadge" style="color: #1d9bf0;"><i class="fas fa-check-circle"></i></span>';
+            document.getElementById('previewUsername').textContent = username;
+            
+            // Update jumlah like, retweet, dll
+            document.getElementById('previewLikes').textContent = formatNumber(likesCount);
+            document.getElementById('previewLikesAction').textContent = formatNumber(likesCount);
+            document.getElementById('previewRetweets').textContent = formatNumber(retweetsCount);
+            document.getElementById('previewRetweetsAction').textContent = formatNumber(retweetsCount);
+            document.getElementById('previewReplies').textContent = formatNumber(repliesCount);
+            document.getElementById('previewQuotes').textContent = formatNumber(quotesCount);
+            
+            // Update inisial avatar
+            const displayNameInitials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            document.getElementById('avatarInitials').textContent = displayNameInitials;
+            document.querySelector('#avatarPreview .initials').textContent = displayNameInitials;
+            
+            // Sembunyikan badge verified jika tidak aktif
+            const verifiedOption = document.querySelector('.control-item');
+            const badge = document.getElementById('verifiedBadge');
+            badge.style.display = verifiedOption.classList.contains('active') ? 'inline' : 'none';
+            
+            // Update char count
+            updateCharCount();
+        }
+
+        // Fungsi untuk memformat angka (1000 -> 1K, 1000000 -> 1M)
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+            }
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+            }
+            return num;
+        }
+
+        // Fungsi untuk reset form
+        function resetForm() {
+            document.getElementById('tweetContent').value = '';
+            document.getElementById('displayName').value = 'Twitter User';
+            document.getElementById('username').value = '@twitteruser';
+            document.getElementById('likesCount').value = '245';
+            document.getElementById('retweetsCount').value = '56';
+            document.getElementById('repliesCount').value = '32';
+            document.getElementById('quotesCount').value = '14';
+            
+            // Reset avatar
+            const previewImage = document.getElementById('previewImage');
+            const previewAvatarImage = document.getElementById('previewAvatarImage');
+            const avatarInitials = document.getElementById('avatarInitials');
+            const avatarPreviewInitials = document.querySelector('#avatarPreview .initials');
+            
+            previewImage.src = '';
+            previewImage.classList.add('hidden');
+            
+            previewAvatarImage.src = '';
+            previewAvatarImage.classList.add('hidden');
+            
+            avatarInitials.classList.remove('hidden');
+            avatarPreviewInitials.classList.remove('hidden');
+            
+            // Reset opsi
+            document.querySelector('.control-item').classList.add('active');
+            
+            // Reset input file
+            document.getElementById('avatarUpload').value = '';
+            
+            updateCharCount();
+            generateTweet();
+        }
+
+        // Fungsi untuk mengunduh tweet sebagai gambar
+        function downloadTweet() {
+            const tweetElement = document.getElementById('tweetToDownload');
+            
+            // Menggunakan html2canvas untuk mengonversi elemen tweet menjadi gambar
+            html2canvas(tweetElement, {
+                backgroundColor: '#000',
+                scale: 2, // Kualitas lebih tinggi
+                onclone: function(clonedDoc) {
+                    const clonedElement = clonedDoc.getElementById('tweetToDownload');
+                    clonedElement.style.width = '600px';
+                    clonedElement.style.borderRadius = '12px';
+                }
+            }).then(canvas => {
+                // Mengonversi canvas ke URL data
+                const imageURL = canvas.toDataURL('image/png');
+                
+                // Membuat elemen link untuk mengunduh
+                const link = document.createElement('a');
+                link.href = imageURL;
+                link.download = 'tweet.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        }
+
+        // Event listener untuk input
+        document.getElementById('tweetContent').addEventListener('input', updateCharCount);
+        document.getElementById('tweetContent').addEventListener('input', generateTweet);
+        document.getElementById('displayName').addEventListener('input', generateTweet);
+        document.getElementById('username').addEventListener('input', generateTweet);
+        document.getElementById('likesCount').addEventListener('input', generateTweet);
+        document.getElementById('retweetsCount').addEventListener('input', generateTweet);
+        document.getElementById('repliesCount').addEventListener('input', generateTweet);
+        document.getElementById('quotesCount').addEventListener('input', generateTweet);
+    </script>
+</body>
+  </html>
